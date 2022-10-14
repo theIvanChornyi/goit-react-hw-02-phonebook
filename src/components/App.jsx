@@ -1,8 +1,11 @@
 import { Component } from 'react';
+import { nanoid } from 'nanoid';
+
 import { Section } from './Section';
 import { Box } from './Box';
 import { Contacts } from './Contacts';
 import { PhonebookForm } from './PhonebookForm';
+import { Filter } from './Contacts/Filter';
 
 const INITIAL_STATE = {
   contacts: [
@@ -18,14 +21,50 @@ const INITIAL_STATE = {
 
 export class App extends Component {
   state = { ...INITIAL_STATE };
+
+  addContact = newContact => {
+    const normalizeNewContact = { id: nanoid(), ...newContact };
+    this.setState(prev => {
+      return { contacts: [...prev.contacts, normalizeNewContact] };
+    });
+  };
+
+  deleteContact = contactId => {
+    this.setState(p => ({
+      contacts: p.contacts.filter(contact => contact.id !== contactId),
+    }));
+  };
+
+  takeFilterRequest = (request = '') => {
+    const normalizedRequest = request.toLowerCase();
+    this.setState({ filter: normalizedRequest });
+  };
+
+  filtredContacts = () => {
+    const data = this.state;
+    const filtredArr = [...data.contacts].filter(contact => {
+      const normalizedName = contact.name.toLowerCase();
+      return normalizedName.includes(data.filter);
+    });
+    return filtredArr;
+  };
+
   render() {
     return (
       <Box as="main">
         <Section tittle="Phonebook">
-          <PhonebookForm />
+          <PhonebookForm
+            onAddContact={this.addContact}
+            initState={this.state}
+          />
         </Section>
+
         <Section tittle="Contacts">
-          <Contacts contacts={this.state.contacts} />
+          <Filter onFilterContacts={this.takeFilterRequest} />
+          <Contacts
+            contacts={this.filtredContacts()}
+            onDeleteContact={this.deleteContact}
+          />
         </Section>
       </Box>
     );

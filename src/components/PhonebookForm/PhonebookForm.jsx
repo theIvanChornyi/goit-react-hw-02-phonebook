@@ -1,64 +1,47 @@
-// import PropTypes from 'prop-types';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as yup from 'yup';
+import PropTypes from 'prop-types';
+import { Formik, Form } from 'formik';
 
-const INITIAL_VALUES = {
-  name: '',
-  number: '',
-};
+import { schema } from './validationSchema';
+import { FormInput } from './FormInput';
 
-const schema = yup.object().shape({
-  name: yup
-    .string()
-    .required(
-      "Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-    ),
-  number: yup
-    .number()
-    .positive()
-    .integer()
-    .required(
-      'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
-    ),
-});
-
-export const PhonebookForm = () => {
-  const handleSubmit = ({ name, number }, { resetForm }) => {
-    resetForm();
-    console.log({ name: name.trim(), number: number.trim() });
-    return { name: name.trim(), number: number.trim() };
+export const PhonebookForm = ({ onAddContact, initState }) => {
+  const checkUniqContactName = name => {
+    const isIncludes = !!initState.contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    return isIncludes;
   };
+
+  const handleSubmit = ({ name, number }, { resetForm }) => {
+    if (checkUniqContactName(name)) {
+      alert(`${name} is already in contacts`);
+    } else {
+      resetForm();
+      const newContact = { name: name.trim(), number: number.trim() };
+      onAddContact(newContact);
+    }
+  };
+
+  const { name, number } = initState;
   return (
     <Formik
-      initialValues={INITIAL_VALUES}
+      initialValues={{ name, number }}
       onSubmit={handleSubmit}
       validationSchema={schema}
     >
       <Form autoComplete="off">
-        <label htmlFor="name">
-          <ErrorMessage name="name" />
-          <span>Name</span>
-          <Field
-            type="text"
-            name="name"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-          />
-        </label>
-        <label htmlFor="number">
-          <ErrorMessage name="number" />
-          <span>Number</span>
-          <Field
-            type="tel"
-            name="number"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
-          />
-        </label>
-        <button type="submit">Submit</button>
+        <FormInput inputType="text" formName="name" />
+        <FormInput inputType="tel" formName="number" />
+        <button type="submit">Add contact</button>
       </Form>
     </Formik>
   );
 };
 
-PhonebookForm.propTypes = {};
+PhonebookForm.propTypes = {
+  onAddContact: PropTypes.func.isRequired,
+  initState: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    number: PropTypes.string.isRequired,
+  }).isRequired,
+};
