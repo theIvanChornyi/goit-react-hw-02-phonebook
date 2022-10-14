@@ -1,15 +1,17 @@
 import PropTypes from 'prop-types';
+import { FormLabel } from 'components/PhonebookForm/FormInput';
+import { Input } from './Filter.styled';
 export const Filter = ({ onFilterContacts }) => {
   return (
     <label>
-      <h2>Find contacts by name</h2>
-      <input
+      <FormLabel>Find contacts by name</FormLabel>
+      <Input
         type="text"
         name="filter"
         onInput={e => {
           onFilterContacts(e.target.value);
         }}
-      ></input>
+      ></Input>
     </label>
   );
 };

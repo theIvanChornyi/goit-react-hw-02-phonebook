@@ -3,6 +3,8 @@ import { Formik, Form } from 'formik';
 
 import { schema } from './validationSchema';
 import { FormInput } from './FormInput';
+import { Box } from 'components/Box';
+import { AddBtn } from './PhonebookForm.styled';
 
 export const PhonebookForm = ({ onAddContact, initState }) => {
   const checkUniqContactName = name => {
@@ -29,11 +31,11 @@ export const PhonebookForm = ({ onAddContact, initState }) => {
       onSubmit={handleSubmit}
       validationSchema={schema}
     >
-      <Form autoComplete="off">
+      <Box autoComplete="off" pt={6} position="relative" as={Form}>
         <FormInput inputType="text" formName="name" />
         <FormInput inputType="tel" formName="number" />
-        <button type="submit">Add contact</button>
-      </Form>
+        <AddBtn type="submit">Add contact</AddBtn>
+      </Box>
     </Formik>
   );
 };

@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
-import { Field, ErrorMessage } from 'formik';
+import { Box } from 'components/Box';
+
+import { FormLabel, Input, ErrorNotification } from './FormInput.styled';
 
 export const FormInput = ({ inputType, formName }) => (
-  <label htmlFor={formName}>
-    <div>{formName}</div>
-    <Field type={inputType} name={formName} id={formName} required />
-    <ErrorMessage name={formName} />
-  </label>
+  <Box htmlFor={formName} display="block" mb={4} as="label">
+    <FormLabel>{formName}</FormLabel>
+    <Input type={inputType} name={formName} id={formName} required />
+    <ErrorNotification component="div" name={formName} />
+  </Box>
 );
 
 FormInput.propTypes = {
